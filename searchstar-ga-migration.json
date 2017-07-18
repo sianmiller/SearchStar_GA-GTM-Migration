@@ -1,0 +1,204 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2017-07-06 15:50:14",
+    "containerVersion": {
+        "path": "accounts/157114/containers/7124227/versions/0",
+        "accountId": "157114",
+        "containerId": "7124227",
+        "containerVersionId": "0",
+        "container": {
+            "path": "accounts/157114/containers/7124227",
+            "accountId": "157114",
+            "containerId": "7124227",
+            "name": "SearchStar - GA Migration",
+            "publicId": "GTM-PP9XQBL",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1498575358681",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/157114/containers/7124227/workspaces?apiLink=container"
+        },
+        "tag": [
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "tagId": "1",
+                "name": "GA Page View",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "overrideGaSettings",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_PAGEVIEW"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "gaSettings",
+                        "value": "{{GASettings}}"
+                    }
+                ],
+                "fingerprint": "1498558471901",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "blockingTriggerId": [
+                    "5"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "triggerId": "5",
+                "name": "Hardcoded Analytics Check",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{js - Harcoded Tag Check}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "TRUE"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1498555697923"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "variableId": "1",
+                "name": "GAID",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "UA-111111-1"
+                    }
+                ],
+                "fingerprint": "1498575440710"
+            },
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "variableId": "3",
+                "name": "GASettings",
+                "type": "gas",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "cookieDomain",
+                        "value": "auto"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "doubleClick",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setTrackerName",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useDebugVersion",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useHashAutoLink",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "decorateFormsAutoLink",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableLinkId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GAID}}"
+                    }
+                ],
+                "fingerprint": "1498558060604"
+            },
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "variableId": "2",
+                "name": "js - Harcoded Tag Check",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function(){\n\n\t//search for and count classic analytics tags\n\tvar classiccount = jQuery(\"script:contains(google-analytics.com/ga.js)\").length;\n\tvar classiccheck = classiccount;\n\n\t//run script if classic tag exists on page\n\tif (classiccount > 0){\n\n\t\t//for each instance check for single line comments & block comments\n\t\tfor (i=0;i<classiccount;i++){\n\n\t\t\tvar str = jQuery(\"script:contains(google-analytics.com/ga.js)\")[i].innerText;\n\t\t\tvar pos = str.indexOf('google-analytics.com/ga.js');\n\t\t\tvar rownum = str.substring(0,pos).split('\\n').length;\n\t\t\tvar row = str.split('\\n')[rownum-1]\n\n\t\t\t//if classic analytics tag is commented out, don't count it\n\t\t\tif (row.trim().substring(0,2) == \"//\"){\n\t\t\t\tclassiccheck = classiccheck - 1;\n\t\t\t} else if (str.indexOf(\"/*\") > 0 && str.indexOf(\"*/\") > pos){\n\t\t\t\tclassiccheck = classiccheck - 1;\n\t\t\t}else {\n\t\t\t\t//if not commented out, check for the correct property ID\n\t\t\t\tvar gaids = str.match(/UA\\-[0-9]+\\-[0-9]+/g)\n\t\t\t\t//if it's the wrong property ID, don't count it\n\t\t\t\tif (gaids.indexOf({{GAID}}) < 0){\n\t\t\t\t\tclassiccheck = classiccheck - 1;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\n\t//search for and count universal analytics tags\n\tvar universalcount = jQuery(\"script:contains(google-analytics.com/analytics.js)\").length;\n\tvar universalcheck = universalcount;\n\n\t//run script if classic tag exists on page\n\tif (universalcount > 0){\n\n\t\t//for each instance check for single line comments & block comments\n\t\tfor (i=0;i<universalcount;i++){\n\n\t\t\tvar str = jQuery(\"script:contains(google-analytics.com/analytics.js)\")[i].innerText;\n\t\t\tvar pos = str.indexOf('google-analytics.com/analytics.js');\n\t\t\tvar rownum = str.substring(0,pos).split('\\n').length;\n\t\t\tvar row = str.split('\\n')[rownum-1]\n\n\t\t\t//if universal analytics tag is commented out, don't count it\n\t\t\tif (row.trim().substring(0,2) == \"//\"){\n\t\t\t\tuniversalcheck = universalcheck - 1;\n\t\t\t} else if (str.indexOf(\"/*\") > 0 && str.indexOf(\"*/\") > pos){\n\t\t\t\tuniversalcheck = universalcheck - 1;\n\t\t\t}else {\n\t\t\t\t//if not commented out, check for the correct property ID\n\t\t\t\tvar gaids = str.match(/UA\\-[0-9]+\\-[0-9]+/g)\n\t\t\t\t//if it's the wrong property ID, don't count it\n\t\t\t\tif (gaids.indexOf({{GAID}}) < 0){\n\t\t\t\t\tuniversalcheck = universalcheck - 1;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\nif (classiccheck+universalcheck > 0){\n\treturn \"TRUE\";\n} else {\n\treturn \"FALSE\";\n}\n\n}\n\n\n/*\nv3.2\nCreated by SearchStar analysts - https://www.search-star.co.uk/\nWritten by Sian Miller, @sianmiller141\nDocumentation: https://www.search-star.co.uk/\n*/\n"
+                    }
+                ],
+                "fingerprint": "1499356208573"
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "157114",
+                "containerId": "7124227",
+                "type": "EVENT",
+                "name": "Event"
+            }
+        ],
+        "fingerprint": "0",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/157114/containers/7124227/versions/0?apiLink=version"
+    }
+}
